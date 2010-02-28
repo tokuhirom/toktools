@@ -1,0 +1,25 @@
+#!/usr/local/bin/perl
+use strict;
+use warnings;
+use Getopt::Long;
+use Pod::Usage;
+use Plack::App::Directory;
+use Plack::Loader;
+
+my $port = 5000;
+GetOptions(
+    'p|port=i' => \$port,
+    'h|help' => \my $help,
+) or pod2usage();
+pod2usage(1) if $help;
+
+my $root = shift or pod2usage();
+my $app = Plack::App::Directory->new({root => $root})->to_app;
+Plack::Loader->load('Standalone', port => $port)->run($app);
+
+__END__
+
+=head1 SYNOPSIS
+
+    $ static_httpd.pl rootdir
+
