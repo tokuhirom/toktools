@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new(max_redirect => 0);
+my $res = $ua->post( 'http://nopaste.64p.org/post' => { body => join( '', <> ) } );
+$res->code == 302 or die $res->status_line;
+print $res->header('Location'), "\n";
+
