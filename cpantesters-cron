@@ -1,0 +1,76 @@
+#!perl
+use strict;
+use warnings;
+use 5.00800;
+our $VERSION = '0.01';
+use XML::Feed;
+use XML::Feed::Deduper;
+use URI;
+use LWP::UserAgent;
+use Getopt::Long;
+use Pod::Usage;
+
+my $URL = 'http://www.cpantesters.org/recent.rss';
+my $DEDUP_DB_PATH = "/tmp/cpantesters2email.$<.dedup.db";
+
+GetOptions(
+    'name_re=s' => \my $name_re,
+    help        => \my $help,
+);
+pod2usage() unless $name_re;
+pod2usage(1) if $help;
+
+my $ua = LWP::UserAgent->new(timeout => 5);
+
+&main;exit;
+
+sub main {
+    my $feed = XML::Feed->parse(URI->new($URL)) or die XML::Feed->errstr;
+    my $deduper = XML::Feed::Deduper->new( path => $DEDUP_DB_PATH );
+    for my $entry ($deduper->dedup($feed->entries)) {
+        next unless $entry->title =~ m{^FAIL};
+
+        my $res = $ua->get($entry->link);
+        die $res->status_line unless $res->is_success;
+        my $text = html2text($res->decoded_content);
+        my $name = "unknown";
+        if ($text =~ /Dear\s+(.+),?/) {
+            $name = $1;
+        }
+        if ($name =~ /$name_re/i) {
+            print $entry->title, "\n";
+            print $entry->link, "\n";
+        }
+    }
+}
+
+sub html2text {
+    my ($html) = @_;
+
+    require HTML::TreeBuilder;
+    require HTML::FormatText;
+
+    my $tree      = HTML::TreeBuilder->new_from_content($html);
+    my $formatter = HTML::FormatText->new( leftmargin => 0, rightmargin => 50 );
+    my $text      = $formatter->format($tree);
+    $tree = $tree->delete;
+    return $text;
+}
+
+1;
+__END__
+
+=head1 SYNOPSIS
+
+    $ cpantesters-cron.pl --name_re=tokuhiro
+
+=head1 DESCRIPTION
+
+Make e-mail by cron + this script.
+
+This is quick and dirty hack.
+
+=head1 LICENSE
+
+same as Perl itself.
+
