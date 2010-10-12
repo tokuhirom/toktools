@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+BEGIN {
+    $ENV{PLACK_ENV} = 'development';
+}
+use Getopt::Long;
+use URI;
+use Plack::Util;
+
+my $n      = 100;
+my $method = 'GET';
+GetOptions(
+    'n=i'  => \$n,
+    method => \$method,
+) or die;
+
+die "Usage: $0 app.psgi url" unless @ARGV == 2;
+my ($psgi, $url) = @ARGV;
+my $app = Plack::Util::load_psgi($psgi);
+my $uri = URI->new($url);
+my $env = {
+    PATH_INFO      => $uri->path,
+    REQUEST_METHOD => $method,
+    QUERY_STRING   => $uri->query,
+};
+$app->($env)->[0] == 200 or die;
+for my $i ( 1 .. $n ) {
+    $app->($env);
+}
+
