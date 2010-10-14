@@ -2,12 +2,15 @@
 use strict;
 use warnings;
 
-my $src = shift @ARGV or die "Usage: $0 user/proj[/branch]";
+my @args = grep { /^-/ } @ARGV;
+my ($src) = grep { !/^-/ } @ARGV;
+die "Usage: $0 user/proj[/branch]" unless $src;
+
 my ($user, $proj, $branch) = split m{/}, $src;
 $branch = 'master' unless defined $branch;
 
 my $url = "http://github.com/$user/$proj/tarball/$branch";
 
-exec 'cpanm', $url;
+exec 'cpanm', @args, $url;
 die "cannot exec: $!";
 
