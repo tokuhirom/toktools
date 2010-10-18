@@ -1,0 +1,11 @@
+#!perl
+use strict;
+use warnings;
+use Imager;
+
+die "Usage: $0 src dst" unless @ARGV==2;
+my ($src_fname, $dst_fname) = @ARGV;
+
+my $img = Imager->new(file => $src_fname);
+$img->write(file => $dst_fname) or die $img->errstr;
+

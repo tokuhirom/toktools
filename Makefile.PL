@@ -10,12 +10,13 @@ requires 'XML::Feed';
 requires 'XML::Feed::Deduper';
 requires 'URI';
 requires 'LWP::UserAgent';
+requires 'Imager';
 
 tests 't/*.t t/*/*.t t/*/*/*.t t/*/*/*/*.t';
 install_script 'static_httpd';
 install_script 'nopaste';
 install_script 'cpanm-github';
 install_script 'cpantesters-cron';
-auto_include;
+install_script 'image-convert';
 WriteAll;
 
