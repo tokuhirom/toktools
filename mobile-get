@@ -9,11 +9,12 @@ use Pod::Usage;
 my $au;
 my $softbank;
 GetOptions(
-    'docomo'   => \my $docomo,
-    'au'       => \$au,
-    'ezweb'    => \$au,
-    'softbank' => \$softbank,
-    'vodafone' => \$softbank,
+    'docomo'        => \my $docomo,
+    'au'            => \$au,
+    'ezweb'         => \$au,
+    'softbank'      => \$softbank,
+    'vodafone'      => \$softbank,
+    'D|dump-header' => \my $dump,
 );
 my $url = shift @ARGV or pod2usage;
 
@@ -24,7 +25,13 @@ $agent = 'SoftBank/1.0/DM001SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Conf
 die "missing agent type" unless $agent;
 
 my $ua = LWP::UserAgent->new(agent => $agent);
-$ua->get($url);
+my $res = $ua->get($url);
+print Dumper($res->headers) if $dump;
+if ($res->is_success) {
+    print $res->content;
+} else {
+    print $res->status_line;
+}
 
 __END__
 
