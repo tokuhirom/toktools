@@ -18,5 +18,6 @@ install_script 'nopaste';
 install_script 'cpanm-github';
 install_script 'cpantesters-cron';
 install_script 'image-convert';
+install_script 'mobile-get';
 WriteAll;
 

@@ -1,0 +1,36 @@
+#! perl
+use strict;
+use warnings;
+use Data::Dumper;
+use LWP::UserAgent;
+use Getopt::Long;
+use Pod::Usage;
+
+my $au;
+my $softbank;
+GetOptions(
+    'docomo'   => \my $docomo,
+    'au'       => \$au,
+    'ezweb'    => \$au,
+    'softbank' => \$softbank,
+    'vodafone' => \$softbank,
+);
+my $url = shift @ARGV or pod2usage;
+
+my $agent;
+$agent = 'DoCoMo/2.0 N02B(c500;TB;W24H16)' if $docomo;
+$agent = 'UP.Browser/3.2.9.1-UPG1 UP.Link/3.2' if $au;
+$agent = 'SoftBank/1.0/DM001SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1' if $softbank;
+die "missing agent type" unless $agent;
+
+my $ua = LWP::UserAgent->new(agent => $agent);
+$ua->get($url);
+
+__END__
+
+=head1 SYNOPSIS
+
+    % mobile-get --docomo http://example.com/
+    % mobile-get --ezweb http://example.com/
+    % mobile-get --softbank http://example.com/
+
