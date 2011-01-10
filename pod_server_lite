@@ -8,6 +8,7 @@ use Plack::Loader;
 use File::Basename;
 use Path::Class;
 use Text::MicroTemplate qw(:all);
+use Encode qw/encode_utf8/;
 
 # FIX: directory traversal
 
@@ -28,10 +29,11 @@ sub no_index_regexp {
 
 sub render_pod_page {
     render_mt(<<'...', @_);
-? my ($pod_html) = @_;
+? my ($path, $pod_html) = @_;
 <!doctype html>
 <html>
 <head>
+<title><?= $path ?></title>
 <link rel="stylesheet" type="text/css" href="/podstyle.css" />
 </head>
 <body>
@@ -51,6 +53,7 @@ sub render_root_page {
 <!doctype html>
 <html>
 <head>
+<title><?= $title ?> by Pod::Server::Lite</title>
 <link rel="stylesheet" type="text/css" href="/podstyle.css" />
 </head>
 <body>
@@ -104,7 +107,7 @@ sub dispatch_root {
             }
         },
     );
-    [200, ['Content-Type' => 'text/html; charset=utf-8'], [render_root_page($PROJECT_NAME, \@names)]];
+    [200, ['Content-Type' => 'text/html; charset=utf-8'], [encode_utf8(render_root_page($PROJECT_NAME, \@names))]];
 }
 
 sub dispatch_pod {
@@ -114,7 +117,7 @@ sub dispatch_pod {
     my $parser = Pod::Simple::XHTML->new();
     $parser->output_string(\my $html);
     $parser->parse_file($path);
-    $html = render_pod_page(encoded_string $html);
+    $html = render_pod_page($path, encoded_string $html);
     [200, ['Content-Type' => 'text/html; charset=utf-8'], [$html]];
 }
 
