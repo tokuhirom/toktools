@@ -5,6 +5,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Plack::App::Directory;
 use Plack::Loader;
+use Plack::Builder;
 
 my $port = 5000;
 GetOptions(
@@ -13,8 +14,14 @@ GetOptions(
 ) or pod2usage();
 pod2usage(1) if $help;
 
+print "http://127.0.0.1:$port/\n";
+
 my $root = shift or pod2usage();
-my $app = Plack::App::Directory->new({root => $root})->to_app;
+my $app = builder {
+    enable 'AccessLog';
+
+    Plack::App::Directory->new({root => $root})->to_app;
+};
 Plack::Loader->load('Standalone', port => $port)->run($app);
 
 __END__
