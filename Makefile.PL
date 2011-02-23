@@ -21,5 +21,6 @@ install_script 'image-convert';
 install_script 'mobile-get';
 install_script 'pod_server_lite';
 install_script 'cpan-search';
+install_script 'watcher';
 WriteAll;
 
