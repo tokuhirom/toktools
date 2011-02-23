@@ -1,0 +1,36 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Getopt::Long;
+use Filesys::Notify::Simple;
+use Pod::Usage;
+use Log::Minimal;
+
+my @dir;
+GetOptions(
+    'dir=s@' => \@dir,
+    'log-level' => \$Log::Minimal::LOG_LEVEL,
+    'h|help' => \my $help,
+) or pod2usage;
+pod2usage(1) if $help;
+pod2usage unless @dir;
+
+infof("watching %s", ddf(\@dir));
+my $watcher = Filesys::Notify::Simple->new(\@dir);
+while(1) {
+    $watcher->wait(sub {
+        infof("modified.");
+        if (system(@ARGV)==0) {
+            infof("done.");
+        } else {
+            warnf('error: %s', $!);
+        }
+    });
+}
+
+__END__
+
+=head1 SYNOPSIS
+
+    % watcher --dir . -- osascript -e 'tell application "Google Chrome" to reload active tab of window 1'
+
