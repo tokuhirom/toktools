@@ -13,7 +13,7 @@ GetOptions(
     'h|help' => \my $help,
 ) or pod2usage;
 pod2usage(1) if $help;
-pod2usage unless @dir;
+@dir = ('.') unless @dir;
 
 infof("watching %s", ddf(\@dir));
 my $watcher = Filesys::Notify::Simple->new(\@dir);
