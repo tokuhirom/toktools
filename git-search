@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+use 5.12.0;
+use URI::Escape qw/uri_escape/;
+use LWP::UserAgent;
+use JSON;
+use List::Util qw/max/;
+
+binmode *STDOUT, ':utf8';
+
+my $keyword = join(' ', @ARGV) || die "Usage: $0 keyword\n";
+
+my $ua = LWP::UserAgent->new();
+my $res = $ua->get(
+    'http://github.com/api/v2/json/repos/search/' . uri_escape($keyword) );
+$res->is_success or die $res->status_line;
+my $data = decode_json($res->decoded_content);
+my $maxlen =
+  max map { length "$_->{owner}/$_->{name}" } @{ $data->{repositories} };
+for my $repo (@{$data->{repositories}}) {
+    printf "%-${maxlen}s - %s\n", "$repo->{owner}/$repo->{name}", $repo->{description};
+}
+
