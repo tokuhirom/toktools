@@ -14,11 +14,6 @@
    },
    "name" : "toktools",
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "ExtUtils::MakeMaker" : "6.59"
-         }
-      },
       "configure" : {
          "requires" : {
             "CPAN::Meta" : "0",
