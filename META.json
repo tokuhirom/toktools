@@ -1,0 +1,47 @@
+{
+   "abstract" : "It's new $module",
+   "author" : [
+      "tokuhirom <tokuhirom@gmail.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v0.0.49, CPAN::Meta::Converter version 2.120921",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "toktools",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.59"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "CPAN::Meta" : "0",
+            "Module::Build" : "0.4"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "perl" : "5.008005"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/tokuhirom/toktools/issues"
+      },
+      "homepage" : "https://github.com/tokuhirom/toktools",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/tokuhirom/toktools.git",
+         "web" : "https://github.com/tokuhirom/toktools"
+      }
+   },
+   "version" : "0.01"
+}
